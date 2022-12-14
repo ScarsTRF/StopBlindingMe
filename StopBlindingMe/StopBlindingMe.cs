@@ -8,7 +8,7 @@ namespace StopBlindingMe
     {
         public override string Name => "StopBlindingMe";
         public override string Author => "ScarsTRF";
-        public override string Version => "1.0";
+        public override string Version => "1.0.1";
         public override string Link => "https://github.com/ScarsTRF/StopBlindingMe";
 
         [AutoRegisterConfigKey]
