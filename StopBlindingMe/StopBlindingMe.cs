@@ -29,22 +29,35 @@ namespace StopBlindingMe
             harmony.PatchAll();
             config.OnThisConfigurationChanged += c =>
             {
-                NotificationLayer.DisplayDuration.Value = config.GetValue(Hide) ? 0f : config.GetValue(Time);
+                UpdatePanel(NotificationLayer);
             };
         }
         
         [HarmonyPatch(typeof(NotificationPanel))]
         class PatchNotificationPanel
         {
-            [HarmonyPrefix]
-            [HarmonyPatch("OnAwake")]
-            static void OnAwake(NotificationPanel __instance)
+            [HarmonyPostfix]
+            [HarmonyPatch("OnAttach")]
+            static void OnAttach(NotificationPanel __instance)
             {
-                __instance.RunInUpdates(3, () =>
-                {
-                    NotificationLayer = __instance;
-                    __instance.DisplayDuration.Value = config.GetValue(Hide) ? 0f : config.GetValue(Time);
-                });
+                NotificationLayer = __instance;
+                UpdatePanel(__instance);
+            }
+        }
+
+        public static void UpdatePanel(NotificationPanel panel)
+        {
+            if (config.GetValue(Time) >= 30f)
+            {
+                panel.DisplayDuration.Value = config.GetValue(Hide) ? 0f : 30f;
+            }
+            else if (config.GetValue(Time) <= 1f)
+            {
+                panel.DisplayDuration.Value = config.GetValue(Hide) ? 0f : 1f;
+            }
+            else
+            {
+                panel.DisplayDuration.Value = config.GetValue(Hide) ? 0f : config.GetValue(Time);
             }
         }
     }
